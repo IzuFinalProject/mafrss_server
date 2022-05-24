@@ -11,11 +11,11 @@ def get_upload_path(instance, filename):
 class FileModel(models.Model):
     uploaded_at = models.DateTimeField(auto_now_add=True)
     file = models.FileField(upload_to=get_upload_path)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
 
 
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=False)
     first_name = models.CharField(max_length=256, default=None, blank=True, null=True)
     last_name = models.CharField(max_length=256, default=None, blank=True, null=True)
     username = models.CharField(max_length=256, default=None, blank=True, null=True)
@@ -29,7 +29,7 @@ class NotificationModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     title = models.CharField(max_length=100, default='title')
     message = models.CharField(max_length=100, default='message')
-    user_id = models.IntegerField(default=0)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False)
 
     class Meta:
         ordering = ['created_at']

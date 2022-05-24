@@ -1,4 +1,4 @@
-apns2
+apns2==0.7.1
 asgiref==3.5.0
 CacheControl==0.12.10
 cachetools==5.0.0
@@ -13,6 +13,7 @@ dj-database-url==0.5.0
 Django==4.0.1
 django-clearcache==1.2.1
 django-cors-headers==3.11.0
+django-environ==0.8.1
 django-heroku==0.3.1
 django-jsonfield==1.4.1
 django-push-notifications==2.0.0

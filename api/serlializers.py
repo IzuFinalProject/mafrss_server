@@ -14,9 +14,11 @@ class PictureSerializer(serializers.ModelSerializer):
 
 
 class NotificationSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='user.username', read_only=True)
+
     class Meta:
         model = NotificationModel
-        fields = ('message', 'title', 'created_at','id')
+        fields = ('message', 'title', 'created_at', 'id', 'username')
 
 
 class UserSerializer(serializers.ModelSerializer):
