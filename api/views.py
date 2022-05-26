@@ -32,7 +32,7 @@ class TenPerMinuteUserThrottle(UserRateThrottle):
 
 
 @api_view(['GET', ])
-@throttle_classes([TenPerMinuteUserThrottle])
+# @throttle_classes([TenPerMinuteUserThrottle])
 @permission_classes((AllowAny,))
 def getNotfications(self):
     notifications = NotificationModel.objects.filter()
@@ -236,7 +236,7 @@ class UserRecordView(APIView):
         else:
             return Response("Error", status=status.HTTP_400_BAD_REQUEST)
 
-    def delete(self, request, format=None):
+    def delete(self, request):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
         user_id = body['user_id']
