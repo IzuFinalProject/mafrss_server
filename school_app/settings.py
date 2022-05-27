@@ -10,7 +10,7 @@ env = environ.Env()
 # reading .env file
 environ.Env.read_env()
 
-SECRET_KEY = "h0%_&(4#n==ix*i3d(jg$btl_)=%$4q-i@p@6!n2t1dw^pu3u"
+SECRET_KEY = env("SECRET_KEY")
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = ["*"]
@@ -90,14 +90,20 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'school_app.wsgi.application'
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': env("DB_NAME"),
+#         'USER': env("DB_USER"),
+#         'PASSWORD': env("DB_PASS"),
+#         'HOST': env("DB_HOST"),
+#         'PORT': env("DB_PORT"),
+#     }
+# }
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD': env("DB_PASS"),
-        'HOST': env("DB_HOST"),
-        'PORT': env("DB_PORT"),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR,env("DB_NAME")),
     }
 }
 
