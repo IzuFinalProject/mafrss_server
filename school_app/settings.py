@@ -10,7 +10,7 @@ env = environ.Env()
 # reading .env file
 environ.Env.read_env()
 
-SECRET_KEY = env("SECRET_KEY")
+SECRET_KEY = "h0%_&(4#n==ix*i3d(jg$btl_)=%$4q-i@p@6!n2t1dw^pu3u"
 BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = env("DEBUG")
 ALLOWED_HOSTS = ["*"]
