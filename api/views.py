@@ -35,14 +35,14 @@ class TenPerMinuteUserThrottle(UserRateThrottle):
 # @throttle_classes([TenPerMinuteUserThrottle])
 @permission_classes((AllowAny,))
 def getNotfications(self):
-    notifications = NotificationModel.objects.filter()
-    serializer = NotificationSerializer(notifications, many=True)
-    if notifications is not None:
-        return Response(
+    notifications = NotificationModel.objects.all()
+    serializer = NotificationSerializer(notifications,  many=True) #type list
+    if serializer is not None:
+        return JsonResponse(
             serializer.data,
-            status=status.HTTP_200_OK
-        )
-    return Response(
+            status=status.HTTP_200_OK,
+             safe=False)
+    return JsonResponse(
         {
             "error": True,
             "error_msg": serializer.error_messages,
@@ -59,11 +59,11 @@ class UserNotificationView(APIView):
         notifications = NotificationModel.objects.filter(user_id=request.user.id)
         serializer = NotificationSerializer(notifications, many=True)
         if notifications is not None:
-            return Response(
+            return JsonResponse(
                 serializer.data,
-                status=status.HTTP_200_OK
-            )
-        return Response(
+                status=status.HTTP_200_OK,
+             safe=False)
+        return JsonResponse(
             {
                 "error": True,
                 "error_msg": serializer.error_messages,
@@ -145,12 +145,11 @@ class UserMediaView(APIView):
             for f in request.FILES.getlist('file'):
                 instance = FileModel(file=f, user=request.user)
                 instance.save()
-            return Response(status=status.HTTP_201_CREATED)
-        return Response(
-            {
-                "error": True,
-                "error_msg": form.errors,
-            },
+            return JsonResponse(status=status.HTTP_201_CREATED)
+        return JsonResponse(
+                    {
+                        "message": "Accesses Denied Successfully"
+                    },
             status=status.HTTP_400_BAD_REQUEST
         )
 
@@ -158,8 +157,8 @@ class UserMediaView(APIView):
         queryset = FileModel.objects.filter(user_id=request.user.id)
         serializer = PictureSerializer(queryset, many=True)
         if serializer is not None:
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(
+            return JsonResponse(serializer.data, status=status.HTTP_200_OK)
+        return JsonResponse(
             {
                 "error": True,
                 "error_msg": serializer.errors,
@@ -176,7 +175,7 @@ class UserProfileView(APIView):
         if user_pref is not None:
             return HttpResponse(serializers.serialize('json', user_pref), content_type="application/json");
         else:
-            return Response(
+            return JsonResponse(
                 {
                     "error": True
                 },
@@ -196,12 +195,12 @@ class UserProfileView(APIView):
             user_pref.update(last_name=request.data.get('last_name'))
             user.update(last_name=request.data.get('last_name'))
         if user_pref is not None:
-            return Response(
+            return JsonResponse(
                 json.loads(serializers.serialize("json", Profile.objects.filter(user_id=request.user.id))),
                 status=status.HTTP_200_OK
             )
         else:
-            return Response("Error", status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse("Error", status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserRecordView(APIView):
@@ -210,11 +209,11 @@ class UserRecordView(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         if serializer is not None:
-            return Response(
+            return JsonResponse(
                 serializer.data,
                 status=status.HTTP_200_OK
             )
-        return Response(
+        return JsonResponse(
             {
                 "error": True,
                 "error_msg": serializer.error_messages,
@@ -229,17 +228,24 @@ class UserRecordView(APIView):
         if request.data.get('username'):
             user.update(username=request.data.get('username'))
         if user is not None:
-            return Response(
+            return JsonResponse(
                 json.loads(serializers.serialize("json", User.objects.filter(id=request.user.id))),
                 status=status.HTTP_200_OK
             )
         else:
-            return Response("Error", status=status.HTTP_400_BAD_REQUEST)
+            return JsonResponse("Error", status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request):
         body_unicode = request.body.decode('utf-8')
         body = json.loads(body_unicode)
-        user_id = body['user_id']
-        user = User.objects.filter(id=user_id)
-        user.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        id = body['id']
+        try:
+            User.objects.filter(pk__in = id).delete()
+            return JsonResponse(
+                {"detail":"The user is deleted"},
+                status=status.HTTP_200_OK
+            )       
+        except User.DoesNotExist:
+            return JsonResponse( {"detail":"User doesnot exist!s"}, status=status.HTTP_400_BAD_REQUEST)
+            
+            
